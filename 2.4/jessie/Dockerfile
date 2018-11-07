@@ -24,6 +24,7 @@ RUN set -ex \
 		ruby \
 	' \
 	&& apt-get update \
+	&& apt-get install -y aspell \
 	&& apt-get install -y --no-install-recommends $buildDeps \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
@@ -60,7 +61,8 @@ RUN set -ex \
 	\
 	&& gem update --system "$RUBYGEMS_VERSION" \
 	&& gem install bundler --version "$BUNDLER_VERSION" --force \
-	&& rm -r /root/.gem/
+	&& rm -r /root/.gem/ \
+	&& gem install activerecord
 
 # install things globally, for great justice
 # and don't create ".bundle" in all our apps
@@ -74,4 +76,5 @@ ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
 RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
 # (BUNDLE_PATH = GEM_HOME, no need to mkdir/chown both)
 
+ADD ./yspell /usr/bin/yspell
 CMD [ "irb" ]
